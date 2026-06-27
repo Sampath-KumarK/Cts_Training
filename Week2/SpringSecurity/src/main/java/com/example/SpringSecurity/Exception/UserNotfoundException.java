@@ -1,5 +1,11 @@
 package com.example.SpringSecurity.Exception;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class UserNotfoundException {
-    
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class UserNotfoundException extends RuntimeException {
+    public UserNotfoundException(String message) {
+        super(message);
+
+    }
 }
