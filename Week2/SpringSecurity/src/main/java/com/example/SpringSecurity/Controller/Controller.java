@@ -1,6 +1,8 @@
 
 package com.example.SpringSecurity.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +24,8 @@ public class Controller {
         return "Hello World";
     }
     @GetMapping("/students")
-    public String hello1() {
-        return "Now i am a authenticated user";
+    public List<Student> getAllStudents() {
+        return studentrepo.findAll();
     }
     @GetMapping("/dummy")
     public String hello2() {
@@ -34,4 +36,4 @@ public class Controller {
     public Student addStudent(@RequestBody Student student) {
         return studentrepo.save(student);
     }
-}
+}

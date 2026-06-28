@@ -10,17 +10,24 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import java.util.List;
 import com.example.SpringSecurity.Services.StudentsServices;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import com.example.SpringSecurity.Security.JwtFilter;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-
-
-
     @Autowired
     private StudentsServices studentsServices;
+    
+    @Autowired
+    private JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilter(HttpSecurity http) throws Exception {
@@ -28,14 +35,18 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/students", "/dummy").authenticated()
-                .requestMatchers("/hello").permitAll()
+                .requestMatchers("/hello", "/auth/login", "/auth/register", "/add").permitAll()
                 .anyRequest().authenticated()
             )
-            .formLogin(form -> form
-                .permitAll()
-                .defaultSuccessUrl("/dummy", true)
+            // .formLogin(form -> form
+            //     .permitAll()
+            //     .defaultSuccessUrl("/dummy", true)
+            // )
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .csrf(csrf -> csrf.disable());
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -57,20 +68,23 @@ public class SecurityConfig {
         return studentsServices;
     }
 
-@Bean
-public DaoAuthenticationProvider authenticateProvider() {
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
 
-    DaoAuthenticationProvider authprovider =
-            new DaoAuthenticationProvider(userDetailsService(passwordEncoder()));
+        DaoAuthenticationProvider authprovider = new DaoAuthenticationProvider(studentsServices);
+        authprovider.setPasswordEncoder(passwordEncoder());
 
-    authprovider.setPasswordEncoder(passwordEncoder());
-
-    return authprovider;
-}
+        return authprovider;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+    
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return new ProviderManager(List.of(authenticationProvider()));
     }
 
 }
