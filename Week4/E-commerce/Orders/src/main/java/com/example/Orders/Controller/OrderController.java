@@ -2,10 +2,12 @@ package com.example.Orders.Controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.example.Orders.DTO.OrderResponseDTO;
@@ -19,11 +21,14 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/orders")
 public class OrderController {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    private WebClient.Builder webClientBuilder;
+    private final WebClient.Builder webClientBuilder;
+
+    public OrderController(OrderRepository orderRepository, WebClient.Builder webClientBuilder) {
+        this.orderRepository = orderRepository;
+        this.webClientBuilder = webClientBuilder;
+    }
 
     @PostMapping("/placeOrder")
     public Mono<ResponseEntity<OrderResponseDTO>> placeOrder(@RequestBody Order order) {
@@ -31,14 +36,16 @@ public class OrderController {
         return webClientBuilder
                 .build()
                 .get()
-                .uri("http://Product/products/" + order.getProductId())
+                .uri("http://PRODUCT/products/" + order.getProductId())
                 .retrieve()
                 .bodyToMono(ProductDTO.class)
                 .map(productDTO -> {
 
+                    Order savedOrder = orderRepository.save(order);
+
                     OrderResponseDTO responseDTO = new OrderResponseDTO();
 
-                    responseDTO.setOrderId(order.getId());
+                    responseDTO.setOrderId(savedOrder.getId());
                     responseDTO.setProductId(order.getProductId());
                     responseDTO.setQuantity(order.getQuantity());
 
@@ -47,8 +54,6 @@ public class OrderController {
 
                     responseDTO.setTotalPrice(
                             order.getQuantity() * productDTO.getPrice());
-
-                    orderRepository.save(order);
 
                     return ResponseEntity.ok(responseDTO);
 
