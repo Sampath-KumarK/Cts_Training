@@ -1,0 +1,44 @@
+.container {
+  width: 95%;
+  margin: 20px auto;
+  border: 1px solid #999;
+  padding: 15px;
+  font-family: Arial, sans-serif;
+}
+
+.container h1 {
+  margin-bottom: 25px;
+}
+
+.cards {
+  display: flex;
+  justify-content: space-around;
+  gap: 25px;
+}
+
+.card {
+  width: 220px;
+  border: 1px solid #d3d3d3;
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+}
+
+.card h3 {
+  text-align: left;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.card p {
+  margin: 4px 0;
+  font-size: 16px;
+}
+
+.card strong {
+  display: block;
+}
+
+.value {
+  margin-left: 20px;
+}
