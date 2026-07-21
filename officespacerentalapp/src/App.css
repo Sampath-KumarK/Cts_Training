@@ -1,0 +1,25 @@
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f5f5f5;
+}
+
+.container{
+    width:80%;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    margin:20px 0;
+    padding:20px;
+    width:350px;
+    box-shadow:0px 0px 10px gray;
+}
+
+.card img{
+    width:250px;
+    height:180px;
+    object-fit:cover;
+}
