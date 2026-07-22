@@ -6,7 +6,6 @@ import LogoutButton from "./components/LogoutButton";
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const handleLogin = () => {
     setIsLoggedIn(true);
   };

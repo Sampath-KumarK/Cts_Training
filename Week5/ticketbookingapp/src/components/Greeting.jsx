@@ -4,9 +4,8 @@ import UserPage from "./UserPage";
 function Greeting({ isLoggedIn }) {
 
   if (isLoggedIn) {
-    return <UserPage />;
+    return <UserPage/>;
   }
-
   return <GuestPage />;
 }
 
